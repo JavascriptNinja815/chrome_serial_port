@@ -1,0 +1,9 @@
+{
+  "name": "com.serial.port",
+  "description": "Serial Port API Host",
+  "path": "serial-port.bat",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://bknhnamnalibkgnljllnjdmemfcinjbm/"
+  ]
+}

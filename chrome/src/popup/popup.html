@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round|Open+Sans">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<style type="text/css">
+		body {
+			color: #404E67;
+			background: #F5F7FA;
+			font-family: 'Open Sans', sans-serif;
+			width: 750px;
+		}
+
+		.container {
+			display: -webkit-inline-box;
+			padding: 0px;
+			width: 100%;
+		}
+
+		.table {
+			margin-bottom: 5px;
+		}
+
+		.table-wrapper {
+			background: #fff;
+			padding: 5px;
+		}
+
+		.position-div {
+			width: 46%;
+		}
+
+		.catch-all-div {
+			width: 38%;
+		}
+
+		.com-div {
+			width: 16%;
+		}
+
+		.table-title {
+			padding-bottom: 10px;
+			margin: 0 0 10px;
+		}
+
+		.table-title h2 {
+			margin: 6px 0 0;
+			font-size: 22px;
+		}
+
+		.table-title .add-new {
+			float: right;
+			height: 30px;
+			font-weight: bold;
+			font-size: 12px;
+			text-shadow: none;
+			min-width: 100px;
+			border-radius: 50px;
+			line-height: 13px;
+		}
+
+		.table-title .add-new i {
+			margin-right: 4px;
+		}
+
+		table.table tr th,
+		table.table tr td {
+			border-color: #e9e9e9;
+			padding: 0px;
+			text-align: center;
+		}
+
+		table.table th i {
+			font-size: 13px;
+			margin: 0 5px;
+			cursor: pointer;
+		}
+
+		table.table td a {
+			cursor: pointer;
+			display: inline-block;
+			margin: 0 5px;
+			min-width: 24px;
+		}
+
+		table.table td a.add-position,
+		table.table td a.add-catch-all {
+			color: #27C46B;
+		}
+
+		table.table td a.edit-position,
+		table.table td a.edit-catch-all {
+			color: #FFC107;
+		}
+
+		table.table td a.delete-position,
+		table.table td a.delete-catch-all {
+			color: #E34724;
+		}
+
+		table.table td i {
+			font-size: 19px;
+		}
+
+		table.table td a.add-position i,
+		table.table td a.add-catch-all i {
+			font-size: 24px;
+			margin-right: -1px;
+			position: relative;
+			top: 3px;
+		}
+
+		table.table .form-control {
+			height: 25px;
+			line-height: 25px;
+			box-shadow: none;
+			border-radius: 2px;
+			padding: 0px;
+		}
+
+		table.table .form-control.error {
+			border-color: #f50000;
+		}
+
+		table.table td .add-position,
+		table.table td .add-catch-all,
+		table.table td .delete-position {
+			display: none;
+		}
+
+		.title {
+			text-align: center;
+		}
+
+		.table-body {
+			height: 280px;
+			overflow-y: scroll;
+		}
+
+		.com-body {
+			height: 280px;
+		}
+
+		.button {
+			text-align: center;
+		}
+	</style>
+
+</head>
+
+<body>
+	<div class="container">
+		<div class="table-wrapper position-div">
+			<div class="title">
+				<h3>Positions</h3>
+			</div>
+			<div id="position-table" class="table-body">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th style="width: 60px;">Position</th>
+							<th style="width: 80px;">Match Code</th>
+							<th style="width: 70px;">Color</th>
+							<th style="width: 75px;">Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+			<div class="button">
+				<button id="add-position-btn" type="button" class="btn btn-info add-new"><i class="fa fa-plus"></i> Add New
+				</button>
+			</div>
+		</div>
+
+		<div class="table-wrapper catch-all-div">
+			<div class="title">
+				<h3>Catch All</h3>
+			</div>
+			<div id="catch-all-table" class="table-body">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>Match Code</th>
+							<th>Color</th>
+							<th style="width: 75px;">Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Destroy</td>
+							<td>
+								<select disabled>
+									<option value="red" selected="selected">Red</option>
+									<option value="blue">Blue</option>
+									<option value="white">White</option>
+									<option value="yellow">Yellow</option>
+									<option value="green">Green</option>
+								</select>
+							</td>
+							<td>
+								<a class="add-catch-all" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a>
+								<a class="edit-catch-all" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
+								<a class="delete-catch-all" title="Delete" data-toggle="tooltip"><i
+										class="material-icons">&#xE872;</i></a>
+							</td>
+						</tr>
+
+						<tr>
+							<td>JJ</td>
+							<td>
+								<select disabled>
+									<option value="red" selected="selected">Red</option>
+									<option value="blue">Blue</option>
+									<option value="white">White</option>
+									<option value="yellow">Yellow</option>
+									<option value="green">Green</option>
+								</select>
+							</td>
+							<td>
+								<a class="add-catch-all" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a>
+								<a class="edit-catch-all" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
+								<a class="delete-catch-all" title="Delete" data-toggle="tooltip"><i
+										class="material-icons">&#xE872;</i></a>
+							</td>
+						</tr>
+
+						<tr>
+							<td>SAL</td>
+							<td>
+								<select disabled>
+									<option value="red" selected="selected">Red</option>
+									<option value="blue">Blue</option>
+									<option value="white">White</option>
+									<option value="yellow">Yellow</option>
+									<option value="green">Green</option>
+								</select>
+							</td>
+							<td>
+								<a class="add-catch-all" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a>
+								<a class="edit-catch-all" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
+								<a class="delete-catch-all" title="Delete" data-toggle="tooltip"><i
+										class="material-icons">&#xE872;</i></a>
+							</td>
+						</tr>
+
+						<tr>
+							<td>DON</td>
+							<td>
+								<select disabled>
+									<option value="red" selected="selected">Red</option>
+									<option value="blue">Blue</option>
+									<option value="white">White</option>
+									<option value="yellow">Yellow</option>
+									<option value="green">Green</option>
+								</select>
+							</td>
+							<td>
+								<a class="add-catch-all" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a>
+								<a class="edit-catch-all" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
+								<a class="delete-catch-all" title="Delete" data-toggle="tooltip"><i
+										class="material-icons">&#xE872;</i></a>
+							</td>
+						</tr>
+
+						<tr>
+							<td>NHP</td>
+							<td>
+								<select disabled>
+									<option value="red" selected="selected">Red</option>
+									<option value="blue">Blue</option>
+									<option value="white">White</option>
+									<option value="yellow">Yellow</option>
+									<option value="green">Green</option>
+								</select>
+							</td>
+							<td>
+								<a class="add-catch-all" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a>
+								<a class="edit-catch-all" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
+								<a class="delete-catch-all" title="Delete" data-toggle="tooltip"><i
+										class="material-icons">&#xE872;</i></a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="button">
+				<button id="add-catch-all-btn" type="button" class="btn btn-info add-new"><i class="fa fa-plus"></i> Add New
+				</button>
+			</div>
+		</div>
+
+		<div id="com" class="table-wrapper com-div">
+			<div class="title">
+				<h3>COM Port</h3>
+			</div>
+			<div class="com-body">
+				<table id="com-table" class="table">
+					<tbody>
+						<tr>
+							<td style="border-top: none;">
+								<select id="com-dropdown" style="width: 80px;">
+									<option value="com1">COM1</option>
+								</select>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="button">
+				<button id="com-refresh" type="button" class="btn btn-info refresh"><i class="fa fa-refresh"></i> Refresh
+				</button>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="popup.js"></script>
+</body>
+
+
+</html>

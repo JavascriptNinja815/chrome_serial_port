@@ -1,0 +1,38 @@
+{
+  "name": "Send-Data-To-Host",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "This extension scraps data from website and send data to host",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "scripts": [
+      "src/bg/background.js"
+    ],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_icon": "icons/icon19.png",
+    "default_title": "send_data_usb",
+    "default_popup": "src/popup/popup.html"
+  },
+  "content_scripts": [{
+    "matches": ["https://rms-webscan.com/*"],
+    "js": [
+      "js/jquery.min.js",
+      "src/content/content.js"
+    ],
+    "all_frames": true,
+    "run_at": "document_end"
+    }
+  ],
+  "permissions": [
+    "nativeMessaging",
+    "tabs",
+    "storage"
+  ],
+  "content_security_policy": "script-src 'self' https://ajax.googleapis.com https://maxcdn.bootstrapcdn.com; object-src 'self'"
+}
