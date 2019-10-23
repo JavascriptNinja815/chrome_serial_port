@@ -1,7 +1,7 @@
 $(document).ready(function () {
   // Conect Background using Port
   var port = chrome.runtime.connect({
-    name: 'scrape_data'
+    name: 'arduino'
   });
   
   $('#p_upc').keypress(function (event) {

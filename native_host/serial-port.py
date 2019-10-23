@@ -27,7 +27,7 @@ def portsList():  # Function That Get Available COM Ports
 
 
 def log(msg):  # Function That Log Data To Text File For Debugging
-    f = open('./log.txt', 'a')
+    f = open("./log.txt", 'a')
     f.write(msg)
     f.close()
 
@@ -51,7 +51,7 @@ def read_thread_func():  # Thread that reads messages from the extension.
         msg_length = struct.unpack('i', msg_length_bytes)[0]
 
         # Read the msg (JSON object) of the message.
-        msg = sys.stdin.read(msg_length).decode('utf-8')
+        msg = sys.stdin.read(msg_length).decode("utf-8")
         data = json.loads(msg)
         if data["type"] == "SEND":
             port = data["port"]
@@ -59,13 +59,14 @@ def read_thread_func():  # Thread that reads messages from the extension.
             ser = getArduino(port)
             if ser != None:
                 send_msg(json.dumps(
-                    {'response': 'successfuly wrote' + code + ' to Arduino'}))
+                    {"arduino": "successfuly wrote" + code}))
                 ser.write(code.encode("utf-8"))
                 ser.close()
             else:
-                send_msg(json.dumps({"response": "can not open " + port}))
+                send_msg(json.dumps({"arduino": "can not open " + port}))
 
-        if data["type"] == 'REQUEST':
+        if data["type"] == "REQUEST":
+            log('request')
             # Get availale com ports list and send to extension
             portsList()
 
@@ -75,5 +76,5 @@ def Main():
     thread.start()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     Main()

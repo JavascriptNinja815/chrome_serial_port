@@ -45,11 +45,11 @@ var configData = {
     matchCode: 'Destroy',
     color: 'red'
   }],
-  com: 'com4'
+  com: ['COM1', 'COM2', 'COM3', 'COM4']
 }
 
-function makePopup(configData) {
-  // Make Positions Table
+// Function That Makes Positions Table
+function updatePositionTable() {
   var positionTable = '';
   for (var i in configData.positions) {
     var red, blue, white, yellow, green;
@@ -95,8 +95,10 @@ function makePopup(configData) {
   // Display Delete Button In Last Row
   var lastIndex = $("#position-table table tbody tr:last-child").index();
   $("#position-table table tbody tr").eq(lastIndex).find(".delete-position").css("display", "inline-block");
+}
 
-  // Make CatchAll Table
+// Function That Makes CatchAll Table
+function updateCatchAllTable(configData) {
   var catchAllTable = '';
   for (var i in configData.catchAll) {
     var red, blue, white, yellow, green;
@@ -138,17 +140,41 @@ function makePopup(configData) {
       </tr>';
   }
   $("#catch-all-table table tbody").append(catchAllTable);
+}
 
-  // Make COM Table
-  $('#com-dropdown').val(configData.com);
-  
+// Function that Makes COM Dropdown
+function updateDropdown(portsList) {
+  var comDropdown = '';
+  for (var i in portsList) {
+    comDropdown +=
+      '<option value=' + portsList[i] + '>' + portsList[i] + '</option>';
+  }
+  $('#com-table tbody tr td select').append(comDropdown);
+}
+
+function makePopup(configData) {
+  updatePositionTable(configData.positions);
+  updateCatchAllTable(configData);
+  updateDropdown(configData.com);
+
   // Adding Functionalities To Table
   $('[data-toggle="tooltip"]').tooltip();
-
 }
 
 function setListeners() {
-
+  // When refresh button is clicked
+  $('#refresh').click(function () {
+    var port = chrome.runtime.connect({
+      name: 'arduino'
+    });
+    port.postMessage({
+      type: 'refresh'
+    })
+    port.onMessage.addListener(function (msg) {
+      updateDropdown(msg);
+    })
+    // $('#com-dropdown').val()
+  })
 }
 chrome.storage.sync.get(['configData'], function (result) {
   if (result.configData) {
