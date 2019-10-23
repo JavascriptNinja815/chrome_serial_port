@@ -11,14 +11,14 @@ if sys.platform == "win32":
     msvcrt.setmode(sys.stdin.fileno(), os.O_BINARY)
     msvcrt.setmode(sys.stdout.fileno(), os.O_BINARY)
 
-# Function That Send MSG To Extension
-def send_msg(msg):
+
+def send_msg(msg):  # Function That Send MSG To Extension
     sys.stdout.write(struct.pack('I', len(msg)))
     sys.stdout.write(msg)
     sys.stdout.flush()
 
-# Function That Get Available COM Ports
-def portsList():
+
+def portsList():  # Function That Get Available COM Ports
     portsList = []
     ports = serial.tools.list_ports.comports()
     for port, desc, hwid in ports:
@@ -26,22 +26,21 @@ def portsList():
     send_msg(json.dumps({"portsList": portsList}))
 
 
-# Function That Log Data To Text File For Debugging
-def log(msg):
+def log(msg):  # Function That Log Data To Text File For Debugging
     f = open('./log.txt', 'a')
     f.write(msg)
     f.close()
 
-# Function That Check Port Is Available Or Not
-def getArduino(port):
+
+def getArduino(port):  # Function That Check Port Is Available Or Not
     try:
-        arduino = serial.Serial(port, baudrate = 115200, dsrdtr = True)
+        arduino = serial.Serial(port, baudrate=115200, dsrdtr=True)
         return arduino
     except:
         return None
 
-# Thread that reads messages from the extension.
-def read_thread_func():
+
+def read_thread_func():  # Thread that reads messages from the extension.
     message_number = 0
     while 1:
         msg_length_bytes = sys.stdin.read(4)
@@ -59,17 +58,16 @@ def read_thread_func():
             code = data["data"]
             ser = getArduino(port)
             if ser != None:
-                send_msg(json.dumps({'response': 'successfuly wrote' + code + ' to Arduino'}))
+                send_msg(json.dumps(
+                    {'response': 'successfuly wrote' + code + ' to Arduino'}))
                 ser.write(code.encode("utf-8"))
                 ser.close()
             else:
                 send_msg(json.dumps({"response": "can not open " + port}))
 
         if data["type"] == 'REQUEST':
-          # Get availale com ports list and send to extension
-          portsList()
-
-          
+            # Get availale com ports list and send to extension
+            portsList()
 
 
 def Main():
@@ -78,5 +76,4 @@ def Main():
 
 
 if __name__ == '__main__':
-    # Main()
-    print getPortsList()
+    Main()
