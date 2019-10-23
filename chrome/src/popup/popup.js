@@ -1,33 +1,43 @@
 // Default Config Data
 var configData = {
   positions: [{
+    pos: 1,
     matchCode: 'CSCS',
     color: 'red'
   }, {
+    pos: 2,
     matchCode: 'JJ',
     color: 'red'
   }, {
+    pos: 3,
     matchCode: 'SAL',
     color: 'blue'
   }, {
+    pos: 4,
     matchCode: 'DON*',
     color: 'white'
   }, {
+    pos: 5,
     matchCode: 'NHP',
     color: 'yellow'
   }, {
+    pos: 6,
     matchCode: 'DRS',
     color: 'red'
   }, {
+    pos: 7,
     matchCode: 'PET',
     color: 'red'
   }, {
+    pos: 8,
     matchCode: 'L-SAL',
     color: 'green'
   }, {
+    pos: 9,
     matchCode: 'H-SAL',
     color: 'white'
   }, {
+    pos: 10,
     matchCode: 'BELCO',
     color: 'red'
   }],
@@ -35,7 +45,7 @@ var configData = {
     matchCode: 'Destroy',
     color: 'red'
   }],
-  com: 'com1'
+  com: 'com4'
 }
 
 function makePopup(configData) {
@@ -63,7 +73,7 @@ function makePopup(configData) {
     }
     positionTable +=
       '<tr>\
-        <td>' + (parseInt(i) + 1) + '</td>\
+        <td>' + configData.positions[i].pos + '</td>\
         <td>' + configData.positions[i].matchCode + '</td>\
         <td>\
           <select disabled>\
@@ -137,13 +147,13 @@ function makePopup(configData) {
 
 }
 
-// function setListeners() {
+function setListeners() {
 
-// }
+}
 chrome.storage.sync.get(['configData'], function (result) {
   if (result.configData) {
     configData = result.configData;
   }
   makePopup(configData);
 });
-// setListeners();
+setListeners();

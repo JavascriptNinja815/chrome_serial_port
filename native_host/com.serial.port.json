@@ -4,6 +4,6 @@
   "path": "serial-port.bat",
   "type": "stdio",
   "allowed_origins": [
-    "chrome-extension://bknhnamnalibkgnljllnjdmemfcinjbm/"
+    "chrome-extension://fkidcfdneeimabbgplohjjckhkbbiahh/"
   ]
 }
