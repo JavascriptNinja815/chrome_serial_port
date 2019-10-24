@@ -182,6 +182,13 @@ function setListeners() {
       }
     })
   })
+
+  // When port dropdown is clicked
+  $('#com-dropdown').on('change', function() {
+    if (this.value) {
+      chrome.storage.sync.set({arduino: this.value})
+    }
+  })
 }
 chrome.storage.sync.get(['positions', 'catchAll', 'portsList'], function (result) {
   if (result.positions) {

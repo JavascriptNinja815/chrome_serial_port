@@ -1,19 +1,11 @@
 var config = {};
 var hostName = "com.serial.port";
-var com = 'COM1';
-chrome.storage.sync.get(['config'], function (result) {
-  if (result.configData) {
-    if (result.configData.com) {
-      com = result.configData.com;
-    }
-  }
-});
 
 // Function that convert thesort to output string
-function convert(thesort) {
+function convert(arduino, thesort) {
   var code = {
     type: 'SEND',
-    port: com,
+    port: arduino,
     data: thesort
   }
   return code;
@@ -39,12 +31,20 @@ chrome.runtime.onConnect.addListener(function (port) {
     });
 
     if (msg.type == 'scrapedData') {
-      var code = convert(msg.data);
-      externalPort.postMessage(code);
-      console.log('send:', code);
+      var arduino = '';
+      chrome.storage.sync.get(['arduino'], function (result) {
+        if (result.arduino) {
+          arduino = result.arduino;
+        }
+        var code = convert(arduino, msg.data);
+        externalPort.postMessage(code);
+        console.log('send:', code);
+      });
     }
     if (msg.type == 'refresh') {
-      externalPort.postMessage({type: 'REQUEST'});
+      externalPort.postMessage({
+        type: 'REQUEST'
+      });
     }
   })
 })
