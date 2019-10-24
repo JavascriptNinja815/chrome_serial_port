@@ -3,25 +3,32 @@ $(document).ready(function () {
   var port = chrome.runtime.connect({
     name: 'arduino'
   });
-  
+
   $('#p_upc').keypress(function (event) {
     var keycode = (event.keyCode ? event.keyCode : event.which);
     if (keycode == '13') {
-      setTimeout(function () {
+      var count = 0;
+      var thesort = '';
+      var scrapData = setInterval(function () {
         if (window.frames["main"]) {
-          var thesort = window.frames["main"].frames["middle"].document.getElementById("iFrame").contentWindow.document.getElementById("thesort").innerText;
+          thesort = window.frames["main"].frames["middle"].document.getElementById("iFrame").contentWindow.document.getElementById("thesort").innerText;
         } else if (window.frames["middle"]) {
-          var thesort = window.frames["middle"].document.getElementById("iFrame").contentWindow.document.getElementById("thesort").innerText;
+          thesort = window.frames["middle"].document.getElementById("iFrame").contentWindow.document.getElementById("thesort").innerText;
         } else if (document.getElementById("iFrame")) {
-          var thesort = document.getElementById("iFrame").contentWindow.document.getElementById("thesort").innerText;
+          thesort = document.getElementById("iFrame").contentWindow.document.getElementById("thesort").innerText;
         } else {
-          var thesort = document.getElementById("thesort").innerText;
+          thesort = document.getElementById("thesort").innerText;
         }
-        port.postMessage({
-          type: 'scrapedData',
-          data: thesort
-        })
-      }, 3000);
+        if (thesort || count == 20) {
+          port.postMessage({
+            type: 'scrapedData',
+            data: thesort
+          })
+          clearInterval(scrapData);
+        } else {
+          count++;
+        }
+      }, 300)
     }
   });
 });

@@ -145,11 +145,10 @@ function makeCatchAllTable(catchAll) {
 
 // Function that Makes COM Dropdown
 function makeDropdown(portsList, arduino) {
-  var comDropdown = '';
+  var comDropdown = '<option value=""></option>';
   for (var i in portsList) {
     comDropdown +=
-      '<option value=""></option>\
-      <option value=' + portsList[i] + '>' + portsList[i] + '</option>';
+      '<option value=' + portsList[i] + '>' + portsList[i] + '</option>';
   }
   $('#com-dropdown').append(comDropdown);
   $('#com-dropdown').val(arduino);
@@ -158,11 +157,10 @@ function makeDropdown(portsList, arduino) {
 // Function that Updates COM Dropdown
 function updateDropdown(portsList) {
   $('#com-dropdown').empty();
-  var comDropdown = '';
+  var comDropdown = '<option value=""></option>';
   for (var i in portsList) {
     comDropdown +=
-      '<option value=""></option>\
-      <option value=' + portsList[i] + '>' + portsList[i] + '</option>';
+      '<option value=' + portsList[i] + '>' + portsList[i] + '</option>';
   }
   $('#com-dropdown').append(comDropdown);
   $('#com-dropdown').val('');
