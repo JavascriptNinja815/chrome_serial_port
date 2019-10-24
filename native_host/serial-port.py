@@ -4,6 +4,7 @@ import threading
 import serial
 import serial.tools.list_ports
 import json
+import time
 
 if sys.platform == "win32":
     import os
@@ -32,14 +33,6 @@ def log(msg):  # Function That Log Data To Text File For Debugging
     f.close()
 
 
-def getArduino(port):  # Function That Check Port Is Available Or Not
-    try:
-        arduino = serial.Serial(port, baudrate=115200, dsrdtr=True)
-        return arduino
-    except:
-        return None
-
-
 def read_thread_func():  # Thread that reads messages from the extension.
     message_number = 0
     while 1:
@@ -54,17 +47,15 @@ def read_thread_func():  # Thread that reads messages from the extension.
         msg = sys.stdin.read(msg_length).decode("utf-8")
         data = json.loads(msg)
         if data["type"] == "SEND":
-            port = data["port"]
-            code = data["data"]
-            ser = getArduino(port)
-            if ser != None:
-                send_msg(json.dumps(
-                    {"arduino": "successfuly wrote" + code}))
-                ser.write("P1B".encode("utf-8"))
-                # ser.write(code.encode("utf-8"))
-                ser.close()
-            else:
+            try:
+                arduino = serial.Serial(
+                    data["port"], baudrate=3000000, dsrdtr=1)
+                arduino.write(data["data"])
+                arduino.close()
+                send_msg(json.dumps({"arduino": "successfuly wrote"}))
+            except:
                 send_msg(json.dumps({"arduino": "can not open port: " + port}))
+                continue
 
         if data["type"] == "REQUEST":
             # Get availale com ports list and send to extension
