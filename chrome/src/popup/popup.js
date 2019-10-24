@@ -48,6 +48,7 @@ catchAll = [{
 
 portsList = ['COM1', 'COM2', 'COM3', 'COM4'];
 
+arduino = 'COM4';
 // Function That Makes Positions Table
 function makePositionTable(positions) {
   var positionTable = '';
@@ -143,29 +144,32 @@ function makeCatchAllTable(catchAll) {
 }
 
 // Function that Makes COM Dropdown
-function makeDropdown(portsList) {
+function makeDropdown(portsList, arduino) {
   var comDropdown = '';
   for (var i in portsList) {
     comDropdown +=
-      '<option value=' + portsList[i] + '>' + portsList[i] + '</option>';
+      '<option value=""></option>\
+      <option value=' + portsList[i] + '>' + portsList[i] + '</option>';
   }
-  $('#com-table tbody tr td select').append(comDropdown);
+  $('#com-dropdown').append(comDropdown);
+  $('#com-dropdown').val(arduino);
 }
 
 // Function that Updates COM Dropdown
 function updateDropdown(portsList) {
-  $('#com-table tbody tr td select').empty();
+  $('#com-dropdown').empty();
   var comDropdown = '';
   for (var i in portsList) {
     comDropdown +=
-      '<option value=' + portsList[i] + '>' + portsList[i] + '</option>';
+      '<option value=""></option>\
+      <option value=' + portsList[i] + '>' + portsList[i] + '</option>';
   }
-  $('#com-table tbody tr td select').append(comDropdown);
+  $('#com-dropdown').append(comDropdown);
+  $('#com-dropdown').val('');
   chrome.storage.sync.set({
     portsList: portsList
   })
 }
-
 
 function setListeners() {
   // When refresh button is clicked
@@ -178,6 +182,7 @@ function setListeners() {
     })
     port.onMessage.addListener(function (msg) {
       if (msg) {
+        console.log(msg);
         updateDropdown(msg);
       }
     })
@@ -186,11 +191,12 @@ function setListeners() {
   // When port dropdown is clicked
   $('#com-dropdown').on('change', function() {
     if (this.value) {
+      $('#com-dropdown').val(this.value);
       chrome.storage.sync.set({arduino: this.value})
     }
   })
 }
-chrome.storage.sync.get(['positions', 'catchAll', 'portsList'], function (result) {
+chrome.storage.sync.get(['positions', 'catchAll', 'portsList', 'arduino'], function (result) {
   if (result.positions) {
     positions = result.positions;
   }
@@ -200,9 +206,12 @@ chrome.storage.sync.get(['positions', 'catchAll', 'portsList'], function (result
   if (result.portsList) {
     portsList = result.portsList;
   }
+  if (result.arduino) {
+    arduino = result.arduino
+  }
   makePositionTable(positions);
   makeCatchAllTable(catchAll);
-  makeDropdown(portsList);
+  makeDropdown(portsList, arduino);
 
   // Adding Functionalities To Table
   $('[data-toggle="tooltip"]').tooltip();
