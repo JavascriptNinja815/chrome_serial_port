@@ -4,7 +4,6 @@ import threading
 import serial
 import serial.tools.list_ports
 import json
-import time
 
 if sys.platform == "win32":
     import os
@@ -48,13 +47,15 @@ def read_thread_func():  # Thread that reads messages from the extension.
         data = json.loads(msg)
         if data["type"] == "SEND":
             try:
-                arduino = serial.Serial(
-                    data["port"], baudrate=3000000, dsrdtr=1)
-                arduino.write(data["data"])
+                arduino = serial.Serial(data["port"], baudrate=3000000, dsrdtr=1)
+                log('opened')
+                arduino.write(data["data"].encode("utf-8"))
+                log('wrote')
                 arduino.close()
+                log('closed')
                 send_msg(json.dumps({"arduino": "successfuly wrote"}))
             except:
-                send_msg(json.dumps({"arduino": "can not open port: " + port}))
+                send_msg(json.dumps({"arduino": "can not open port: " + data["port"]}))
                 continue
 
         if data["type"] == "REQUEST":
@@ -62,10 +63,6 @@ def read_thread_func():  # Thread that reads messages from the extension.
             portsList()
 
 
-def Main():
+if __name__ == "__main__":
     thread = threading.Thread(target=read_thread_func)
     thread.start()
-
-
-if __name__ == "__main__":
-    Main()
