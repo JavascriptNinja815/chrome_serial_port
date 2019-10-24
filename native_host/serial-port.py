@@ -60,13 +60,13 @@ def read_thread_func():  # Thread that reads messages from the extension.
             if ser != None:
                 send_msg(json.dumps(
                     {"arduino": "successfuly wrote" + code}))
-                ser.write(code.encode("utf-8"))
+                ser.write("P1B".encode("utf-8"))
+                # ser.write(code.encode("utf-8"))
                 ser.close()
             else:
                 send_msg(json.dumps({"arduino": "can not open " + port}))
 
         if data["type"] == "REQUEST":
-            log('request')
             # Get availale com ports list and send to extension
             portsList()
 

@@ -1,60 +1,60 @@
 // Default Config Data
-var configData = {
-  positions: [{
-    pos: 1,
-    matchCode: 'CSCS',
-    color: 'red'
-  }, {
-    pos: 2,
-    matchCode: 'JJ',
-    color: 'red'
-  }, {
-    pos: 3,
-    matchCode: 'SAL',
-    color: 'blue'
-  }, {
-    pos: 4,
-    matchCode: 'DON*',
-    color: 'white'
-  }, {
-    pos: 5,
-    matchCode: 'NHP',
-    color: 'yellow'
-  }, {
-    pos: 6,
-    matchCode: 'DRS',
-    color: 'red'
-  }, {
-    pos: 7,
-    matchCode: 'PET',
-    color: 'red'
-  }, {
-    pos: 8,
-    matchCode: 'L-SAL',
-    color: 'green'
-  }, {
-    pos: 9,
-    matchCode: 'H-SAL',
-    color: 'white'
-  }, {
-    pos: 10,
-    matchCode: 'BELCO',
-    color: 'red'
-  }],
-  catchAll: [{
-    matchCode: 'Destroy',
-    color: 'red'
-  }],
-  com: ['COM1', 'COM2', 'COM3', 'COM4']
-}
+positions = [{
+  pos: 1,
+  matchCode: 'CSCS',
+  color: 'red'
+}, {
+  pos: 2,
+  matchCode: 'JJ',
+  color: 'red'
+}, {
+  pos: 3,
+  matchCode: 'SAL',
+  color: 'blue'
+}, {
+  pos: 4,
+  matchCode: 'DON*',
+  color: 'white'
+}, {
+  pos: 5,
+  matchCode: 'NHP',
+  color: 'yellow'
+}, {
+  pos: 6,
+  matchCode: 'DRS',
+  color: 'red'
+}, {
+  pos: 7,
+  matchCode: 'PET',
+  color: 'red'
+}, {
+  pos: 8,
+  matchCode: 'L-SAL',
+  color: 'green'
+}, {
+  pos: 9,
+  matchCode: 'H-SAL',
+  color: 'white'
+}, {
+  pos: 10,
+  matchCode: 'BELCO',
+  color: 'red'
+}];
+
+catchAll = [{
+  matchCode: 'Destroy',
+  color: 'red'
+}];
+
+portsList = ['COM1', 'COM2', 'COM3', 'COM4'];
 
 // Function That Makes Positions Table
-function updatePositionTable() {
+function makePositionTable(positions) {
   var positionTable = '';
-  for (var i in configData.positions) {
+  for (var i in positions) {
     var red, blue, white, yellow, green;
     red = blue = white = yellow = green = '';
-    switch (configData.positions[i].color) {
+    switch (positions[i].color) {
       case 'red':
         red = 'selected="selected"';
         break;
@@ -73,8 +73,8 @@ function updatePositionTable() {
     }
     positionTable +=
       '<tr>\
-        <td>' + configData.positions[i].pos + '</td>\
-        <td>' + configData.positions[i].matchCode + '</td>\
+        <td>' + positions[i].pos + '</td>\
+        <td>' + positions[i].matchCode + '</td>\
         <td>\
           <select disabled>\
             <option value="red"' + red + '>Red</option>\
@@ -98,12 +98,12 @@ function updatePositionTable() {
 }
 
 // Function That Makes CatchAll Table
-function updateCatchAllTable(configData) {
+function makeCatchAllTable(catchAll) {
   var catchAllTable = '';
-  for (var i in configData.catchAll) {
+  for (var i in catchAll) {
     var red, blue, white, yellow, green;
     red = blue = white = yellow = green = '';
-    switch (configData.positions[i].color) {
+    switch (catchAll[i].color) {
       case 'red':
         red = 'selected="selected"';
         break;
@@ -122,7 +122,7 @@ function updateCatchAllTable(configData) {
     }
     catchAllTable +=
       '<tr>\
-        <td>' + configData.catchAll[i].matchCode + '</td>\
+        <td>' + catchAll[i].matchCode + '</td>\
         <td>\
           <select disabled>\
             <option value="red"' + red + '>Red</option>\
@@ -143,7 +143,7 @@ function updateCatchAllTable(configData) {
 }
 
 // Function that Makes COM Dropdown
-function updateDropdown(portsList) {
+function makeDropdown(portsList) {
   var comDropdown = '';
   for (var i in portsList) {
     comDropdown +=
@@ -152,14 +152,20 @@ function updateDropdown(portsList) {
   $('#com-table tbody tr td select').append(comDropdown);
 }
 
-function makePopup(configData) {
-  updatePositionTable(configData.positions);
-  updateCatchAllTable(configData);
-  updateDropdown(configData.com);
-
-  // Adding Functionalities To Table
-  $('[data-toggle="tooltip"]').tooltip();
+// Function that Updates COM Dropdown
+function updateDropdown(portsList) {
+  $('#com-table tbody tr td select').empty();
+  var comDropdown = '';
+  for (var i in portsList) {
+    comDropdown +=
+      '<option value=' + portsList[i] + '>' + portsList[i] + '</option>';
+  }
+  $('#com-table tbody tr td select').append(comDropdown);
+  chrome.storage.sync.set({
+    portsList: portsList
+  })
 }
+
 
 function setListeners() {
   // When refresh button is clicked
@@ -171,15 +177,27 @@ function setListeners() {
       type: 'refresh'
     })
     port.onMessage.addListener(function (msg) {
-      updateDropdown(msg);
+      if (msg) {
+        updateDropdown(msg);
+      }
     })
-    // $('#com-dropdown').val()
   })
 }
-chrome.storage.sync.get(['configData'], function (result) {
-  if (result.configData) {
-    configData = result.configData;
+chrome.storage.sync.get(['positions', 'catchAll', 'portsList'], function (result) {
+  if (result.positions) {
+    positions = result.positions;
   }
-  makePopup(configData);
+  if (result.catchAll) {
+    catchAll = result.catchAll
+  }
+  if (result.portsList) {
+    portsList = result.portsList;
+  }
+  makePositionTable(positions);
+  makeCatchAllTable(catchAll);
+  makeDropdown(portsList);
+
+  // Adding Functionalities To Table
+  $('[data-toggle="tooltip"]').tooltip();
 });
 setListeners();

@@ -45,7 +45,6 @@ chrome.runtime.onConnect.addListener(function (port) {
     }
     if (msg.type == 'refresh') {
       externalPort.postMessage({type: 'REQUEST'});
-      console.log('request sent');
     }
   })
 })
