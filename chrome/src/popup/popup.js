@@ -50,7 +50,7 @@ $(document).ready(function () {
   portsList = ['COM1', 'COM2', 'COM3', 'COM4'];
 
   arduino = 'COM4';
-  
+
   // Function That Makes Positions Table
   function makePositionTable(positions) {
     var positionTable = '';
@@ -160,14 +160,15 @@ $(document).ready(function () {
   function updateDropdown(portsList) {
     $('#com-dropdown').empty();
     var comDropdown = '<option value=""></option>';
-    for (var i in portsList) {
+    var arduinoPorts = portsList.portsList;
+    for (var i = 0; i < arduinoPorts.length; i++) {
       comDropdown +=
-        '<option value=' + portsList[i] + '>' + portsList[i] + '</option>';
+        '<option value=' + arduinoPorts[i] + '>' + arduinoPorts[i] + '</option>';
     }
     $('#com-dropdown').append(comDropdown);
     $('#com-dropdown').val('');
     chrome.storage.sync.set({
-      portsList: portsList
+      arduinoPorts: arduinoPorts
     });
   }
 
