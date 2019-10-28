@@ -1,55 +1,63 @@
 $(document).ready(function () {
   // Default Config Data
-  positions = [{
-    pos: 1,
+  var positions = [{
+    pos: '1',
     matchCode: 'CSCS',
     color: 'red'
   }, {
-    pos: 2,
+    pos: '2',
     matchCode: 'JJ',
     color: 'red'
   }, {
-    pos: 3,
+    pos: '3',
     matchCode: 'SAL',
     color: 'blue'
   }, {
-    pos: 4,
+    pos: '4',
     matchCode: 'DON*',
     color: 'white'
   }, {
-    pos: 5,
+    pos: '5',
     matchCode: 'NHP',
     color: 'yellow'
   }, {
-    pos: 6,
+    pos: '6',
     matchCode: 'DRS',
     color: 'red'
   }, {
-    pos: 7,
+    pos: '7',
     matchCode: 'PET',
     color: 'red'
   }, {
-    pos: 8,
+    pos: '8',
     matchCode: 'L-SAL',
     color: 'green'
   }, {
-    pos: 9,
+    pos: '9',
     matchCode: 'H-SAL',
     color: 'white'
   }, {
-    pos: 10,
+    pos: '10',
     matchCode: 'BELCO',
     color: 'red'
   }];
 
-  catchAll = [{
+  var catchAll = [{
     matchCode: 'Destroy',
     color: 'red'
   }];
 
-  portsList = ['COM1', 'COM2', 'COM3', 'COM4'];
+  var portsList = ['COM1', 'COM2', 'COM3', 'COM4'];
 
-  arduino = 'COM4';
+  var arduino = 'COM4';
+
+  var positionActions = '<a class="add-position"><i class="material-icons">&#xE03B;</i></a>\
+                        <a class="edit-position"><i class="material-icons">&#xE254;</i></a>\
+                        <a class="delete-position"><i class="material-icons">&#xE872;</i></a>';
+
+  var catchAllActions = '<a class="add-catch-all"><i class="material-icons">&#xE03B;</i></a>\
+                        <a class="edit-catch-all"><i class="material-icons">&#xE254;</i></a>\
+                        <a class="delete-catch-all"><i class="material-icons">&#xE872;</i></a>';
 
   // Function That Makes Positions Table
   function makePositionTable(positions) {
@@ -88,9 +96,9 @@ $(document).ready(function () {
           </select>\
         </td>\
         <td>\
-          <a class="add-position" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a>\
-          <a class="edit-position" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>\
-          <a class="delete-position" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a>\
+          <a class="add-position"><i class="material-icons">&#xE03B;</i></a>\
+          <a class="edit-position"><i class="material-icons">&#xE254;</i></a>\
+          <a class="delete-position"><i class="material-icons">&#xE872;</i></a>\
         </td>\
       </tr>';
     }
@@ -136,9 +144,9 @@ $(document).ready(function () {
           </select>\
         </td>\
         <td>\
-          <a class="add-catch-all" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a>\
-          <a class="edit-catch-all" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>\
-          <a class="delete-catch-all" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a>\
+          <a class="add-catch-all"><i class="material-icons">&#xE03B;</i></a>\
+          <a class="edit-catch-all"><i class="material-icons">&#xE254;</i></a>\
+          <a class="delete-catch-all"><i class="material-icons">&#xE872;</i></a>\
         </td>\
       </tr>';
     }
@@ -170,6 +178,57 @@ $(document).ready(function () {
     chrome.storage.sync.set({
       arduinoPorts: arduinoPorts
     });
+  }
+
+  // Function that get array from position table
+  function getPositionTable() {
+    var array = [];
+    $('#position-table table tbody tr').each(function () {
+      x = $(this).children();
+      var keys = ['pos', 'matchCode', 'color'];
+      var pos, matchCode, color;
+      x.each(function (i) {
+        if (keys[i] == 'pos') {
+          pos = $(this).text();
+        } else if (keys[i] == 'matchCode') {
+          matchCode = $(this).text();
+        } else if (keys[i] == 'color') {
+          color = $(this).find(':selected').val();
+        } else {
+          return;
+        }
+      });
+      array.push({
+        pos: pos,
+        matchCode: matchCode,
+        color: color
+      })
+    })
+    return array;
+  }
+
+  // Function that get array from catch all table
+  function getCatchAllTable() {
+    var array = [];
+    $('#catch-all-table table tbody tr').each(function () {
+      x = $(this).children();
+      var keys = ['matchCode', 'color'];
+      var matchCode, color;
+      x.each(function (i) {
+        if (keys[i] == 'matchCode') {
+          matchCode = $(this).text();
+        } else if (keys[i] == 'color') {
+          color = $(this).find(':selected').val();
+        } else {
+          return;
+        }
+      });
+      array.push({
+        matchCode: matchCode,
+        color: color
+      })
+    })
+    return array;
   }
 
   function setListeners() {
@@ -219,6 +278,9 @@ $(document).ready(function () {
         $(this).parents("tr").find("select").attr("disabled", "disabled");
         $(this).parents("tr").find(".add-position, .edit-position").toggle();
         $("#add-position-btn").removeAttr("disabled");
+        chrome.storage.sync.set({
+          'positions': getPositionTable()
+        });
       }
     });
     $(document).on("click", ".edit-position", function () {
@@ -233,6 +295,26 @@ $(document).ready(function () {
       var index = $("#position-table table tbody tr:last-child").index();
       $("#position-table table tbody tr").eq(index).find(".delete-position").css("display", "inline-block");
       $("#add-position-btn").removeAttr("disabled");
+      chrome.storage.sync.set({
+        'positions': getPositionTable()
+      });
+    });
+
+    // Add New Row In Position Table
+    $(document).on("click", "#add-position-btn", function () {
+      $(this).attr("disabled", "disabled");
+      var index = $("#position-table table tbody tr:last-child").index();
+      var row = '<tr>' +
+        '<td>' + (index + 2) + '</td>' +
+        '<td><input type="text" class="form-control" name="code"></td>' +
+        '<td><select><option value="red">Red</option><option value="blue">Blue</option><option value="white">White</option><option value="yellow">Yellow</option><option value="green">Green</option><select></td>' +
+        '<td>' + positionActions + '</td>' +
+        '</tr>';
+      $("#position-table table").append(row);
+      $("#position-table").scrollTop(index * 30);
+      $("#position-table table tbody tr").eq(index).find(".delete-position").css("display", "none");
+      $("#position-table table tbody tr").eq(index + 1).find(".add-position, .edit-position").toggle();
+      $("#position-table table tbody tr").eq(index + 1).find(".delete-position").css("display", "inline-block");
     });
 
     // Add & Edit & Delete Function In Catch All Table
@@ -255,6 +337,9 @@ $(document).ready(function () {
         $(this).parents("tr").find("select").attr("disabled", "disabled");
         $(this).parents("tr").find(".add-catch-all, .edit-catch-all").toggle();
         $("#add-catch-all-btn").removeAttr("disabled");
+        chrome.storage.sync.set({
+          'catchAll': getCatchAllTable()
+        });
       }
     });
     $(document).on("click", ".edit-catch-all", function () {
@@ -270,31 +355,14 @@ $(document).ready(function () {
       var index = $("#catch-all-table table tbody tr:last-child").index();
       $("#catch-all-table table tbody tr").eq(index).find(".delete-catch-all").css("display", "inline-block");
       $("#add-catch-all-btn").removeAttr("disabled");
-    });
-
-    // Add New Row In Position Table
-    $(document).on("click", "#add-position-btn", function () {
-      $(this).attr("disabled", "disabled");
-      var index = $("#position-table table tbody tr:last-child").index();
-      var positionActions = $("#position-table table td:last-child").html();
-      var row = '<tr>' +
-        '<td>' + (index + 2) + '</td>' +
-        '<td><input type="text" class="form-control" name="code"></td>' +
-        '<td><select><option value="red">Red</option><option value="blue">Blue</option><option value="white">White</option><option value="yellow">Yellow</option><option value="green">Green</option><select></td>' +
-        '<td>' + positionActions + '</td>' +
-        '</tr>';
-      $("#position-table table").append(row);
-      $("#position-table").scrollTop(index * 30);
-      $("#position-table table tbody tr").eq(index).find(".delete-position").css("display", "none");
-      $("#position-table table tbody tr").eq(index + 1).find(".add-position, .edit-position").toggle();
-      $("#position-table table tbody tr").eq(index + 1).find(".delete-position").css("display", "inline-block");
-      $('[data-toggle="tooltip"]').tooltip();
+      chrome.storage.sync.set({
+        'catchAll': getCatchAllTable()
+      });
     });
 
     // Add New Row In Catch-All Table
     $(document).on("click", "#add-catch-all-btn", function () {
       $(this).attr("disabled", "disabled");
-      var catchAllActions = $("#catch-all-table table td:last-child").html();
       var index = $("#catch-all-table table tbody tr:last-child").index();
       var row = '<tr>' +
         '<td><input type="text" class="form-control" name="code"></td>' +
@@ -306,7 +374,6 @@ $(document).ready(function () {
       $("#catch-all-table table tbody tr").eq(index).find(".delete-catch-all").css("display", "none");
       $("#catch-all-table table tbody tr").eq(index + 1).find(".add-catch-all, .edit-catch-all").toggle();
       $("#catch-all-table table tbody tr").eq(index + 1).find(".delete-catch-all").css("display", "inline-block");
-      $('[data-toggle="tooltip"]').tooltip();
     });
   }
   chrome.storage.sync.get(['positions', 'catchAll', 'portsList', 'arduino'], function (result) {
@@ -325,10 +392,7 @@ $(document).ready(function () {
     makePositionTable(positions);
     makeCatchAllTable(catchAll);
     makeDropdown(portsList, arduino);
-
-    // Adding Functionalities To Table
-    $('[data-toggle="tooltip"]').tooltip();
   });
-  
+
   setListeners();
 });
