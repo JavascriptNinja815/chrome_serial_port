@@ -226,9 +226,22 @@ $(document).ready(function () {
       array.push({
         matchCode: matchCode,
         color: color
-      })
-    })
+      });
+    });
     return array;
+  }
+
+  // Function that check validation so it can't be inputed duplicate code
+  function validation(newCode) {
+    var error = true;
+    var positionTable = getPositionTable();
+    var catchAllTable = getCatchAllTable();
+    var tableData = positionTable.concat(catchAllTable);
+    tableData.forEach(function (code) {
+      if (newCode == code.matchCode)
+        error = false;
+    });
+    return error;
   }
 
   function setListeners() {
@@ -263,7 +276,8 @@ $(document).ready(function () {
       var empty = false;
       var input = $(this).parents("tr").find('input[type="text"]');
       input.each(function () {
-        if (!$(this).val()) {
+        var valid = validation($(this).val());
+        if (!$(this).val() || !valid) {
           $(this).addClass("error");
           empty = true;
         } else {
@@ -322,7 +336,8 @@ $(document).ready(function () {
       var empty = false;
       var input = $(this).parents("tr").find('input[type="text"]');
       input.each(function () {
-        if (!$(this).val()) {
+        var valid = validation($(this).val());
+        if (!$(this).val() || !valid) {
           $(this).addClass("error");
           empty = true;
         } else {
@@ -381,7 +396,7 @@ $(document).ready(function () {
       positions = result.positions;
     }
     if (result.catchAll) {
-      catchAll = result.catchAll
+      catchAll = result.catchAll;
     }
     if (result.portsList) {
       portsList = result.portsList;
