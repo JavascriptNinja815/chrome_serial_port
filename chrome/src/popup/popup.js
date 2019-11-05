@@ -237,10 +237,9 @@ $(document).ready(function () {
     var positionTable = getPositionTable();
     var catchAllTable = getCatchAllTable();
     var tableData = positionTable.concat(catchAllTable);
-    tableData.forEach(function (code) {
-      if (newCode == code.matchCode)
-        error = false;
-    });
+    for (var code of tableData) {
+      if (newCode == code['matchCode']) error = false;
+    };
     return error;
   }
 

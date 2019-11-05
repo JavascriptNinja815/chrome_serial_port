@@ -1,20 +1,9 @@
 var config = {};
 var hostName = "com.serial.port";
 
-// Function that convert thesort to output string
-function convert(arduino, thesort) {
-  var code = {
-    type: 'SEND',
-    port: arduino,
-    data: thesort
-  }
-  return code;
-}
-
 chrome.runtime.onConnect.addListener(function (port) {
   console.assert(port.name == 'arduino');
   port.onMessage.addListener(function (msg) {
-    // connect chrome extension to native host
     var externalPort = chrome.runtime.connectNative(hostName);
     externalPort.onMessage.addListener(function (msg) {
       if (msg.portsList) {
@@ -29,16 +18,44 @@ chrome.runtime.onConnect.addListener(function (port) {
     externalPort.onDisconnect.addListener(function () {
       console.log('Disconnected');
     });
-
+    
     if (msg.type == 'scrapedData') {
-      var arduino = '';
-      chrome.storage.sync.get(['arduino'], function (result) {
+      chrome.storage.sync.get(['positions', 'catchAll', 'arduino'], function (result) {
+        var code, arduino = '';
+        if (result.catchAll) {
+          for (var catchAll of result.catchAll) {
+            if (msg.data == catchAll.matchCode) {
+              code = catchAll['color'].substring(0, 3).toUpperCase();
+              break;
+            }
+          }
+        }
         if (result.arduino) {
           arduino = result.arduino;
         }
-        var code = convert(arduino, msg.data);
-        externalPort.postMessage(code);
-        console.log('send:', code);
+
+        if (result.positions) {
+          for (var position of result.positions) {
+            if (msg.data == position['matchCode']) {
+              code = 'P' + position['pos'] + position['color'].charAt(0).toUpperCase();
+              break;
+            }
+          }
+          console.log(code);
+          console.log(arduino);
+          if (code && arduino) {
+            console.log(code, arduino);
+          }
+        }
+        
+        // if (code && arduino) {
+        //   console.log(code, arduino);
+        //   // externalPort.postMessage({
+        //   //   type: 'SEND',
+        //   //   port: arduino,
+        //   //   data: code
+        //   // });
+        // }
       });
     }
     if (msg.type == 'refresh') {
@@ -47,4 +64,4 @@ chrome.runtime.onConnect.addListener(function (port) {
       });
     }
   })
-})
+});
