@@ -16,6 +16,7 @@ def send_msg(msg):  # Function That Send MSG To Extension
     sys.stdout.write(struct.pack('I', len(msg)))
     sys.stdout.write(msg)
     sys.stdout.flush()
+    sys.exit(0)
 
 
 def portsList():  # Function That Get Available COM Ports

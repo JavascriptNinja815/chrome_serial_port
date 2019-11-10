@@ -1,56 +1,4 @@
 $(document).ready(function () {
-  // Default Config Data
-  var positions = [{
-    pos: '1',
-    matchCode: 'CSCS',
-    color: 'red'
-  }, {
-    pos: '2',
-    matchCode: 'JJ',
-    color: 'red'
-  }, {
-    pos: '3',
-    matchCode: 'SAL',
-    color: 'blue'
-  }, {
-    pos: '4',
-    matchCode: 'DON*',
-    color: 'white'
-  }, {
-    pos: '5',
-    matchCode: 'NHP',
-    color: 'yellow'
-  }, {
-    pos: '6',
-    matchCode: 'DRS',
-    color: 'red'
-  }, {
-    pos: '7',
-    matchCode: 'PET',
-    color: 'red'
-  }, {
-    pos: '8',
-    matchCode: 'L-SAL',
-    color: 'green'
-  }, {
-    pos: '9',
-    matchCode: 'H-SAL',
-    color: 'white'
-  }, {
-    pos: '10',
-    matchCode: 'BELCO',
-    color: 'red'
-  }];
-
-  var catchAll = [{
-    matchCode: 'Destroy',
-    color: 'red'
-  }];
-
-  var portsList = ['COM1', 'COM2', 'COM3', 'COM4'];
-
-  var arduino = 'COM4';
-
   var positionActions = '<a class="add-position"><i class="material-icons">&#xE03B;</i></a>\
                         <a class="edit-position"><i class="material-icons">&#xE254;</i></a>\
                         <a class="delete-position"><i class="material-icons">&#xE872;</i></a>';
@@ -244,17 +192,16 @@ $(document).ready(function () {
   }
 
   function setListeners() {
+    var port = chrome.runtime.connect({
+      name: 'arduino'
+    });
     // When refresh button is clicked
     $(document).on('click', '#refresh', function () {
-      var port = chrome.runtime.connect({
-        name: 'arduino'
-      });
       port.postMessage({
         type: 'refresh'
       });
       port.onMessage.addListener(function (msg) {
         if (msg) {
-          console.log(msg);
           updateDropdown(msg);
         }
       });

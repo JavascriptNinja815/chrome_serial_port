@@ -3,6 +3,7 @@ $(document).ready(function () {
   var port = chrome.runtime.connect({
     name: 'arduino'
   });
+
   $('#p_upc').keypress(function (event) {
     var keycode = (event.keyCode ? event.keyCode : event.which);
     if (keycode == '13') {
