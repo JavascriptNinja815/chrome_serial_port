@@ -1,3 +1,3 @@
 @echo off
 
-python "%~dp0/serial-port" %*
+python "%~dp0/serial-port.py" %*

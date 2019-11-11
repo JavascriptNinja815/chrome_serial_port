@@ -48,7 +48,7 @@ def read_thread_func():  # Thread that reads messages from the extension.
         data = json.loads(msg)
         if data["type"] == "SEND":
             try:
-                arduino = serial.Serial(data["port"], baudrate=3000000, dsrdtr=1)
+                arduino = serial.Serial(data["port"], baudrate=2000000, dsrdtr=1)
                 log('opened')
                 arduino.write(data["data"].encode("utf-8"))
                 log('wrote')

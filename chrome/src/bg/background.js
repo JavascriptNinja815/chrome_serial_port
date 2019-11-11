@@ -105,7 +105,7 @@ chrome.runtime.onConnect.addListener(function (port) {
 
     externalPort.onDisconnect.addListener(function () {
       externalPort = null;
-      if (chrome.runtime.lastError) {}
+      // if (chrome.runtime.lastError) {}
     });
     if (msg.type == 'scrapedData') {
       chrome.storage.sync.get(['positions', 'catchAll', 'arduino'], function (result) {
