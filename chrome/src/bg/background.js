@@ -79,6 +79,16 @@ function convert(result, matchCode, callback) {
   }
 }
 
+chrome.runtime.onInstalled.addListener(function (details) {
+  if (details.reason == 'install' || details.reason == 'update') {
+    chrome.storage.sync.set({
+      positions: positions,
+      catchAll: catchAll,
+      arduino: arduino,
+      portsList: portsList
+    });
+  }
+});
 chrome.runtime.onConnect.addListener(function (port) {
   console.assert(port.name == 'arduino');
   port.onMessage.addListener(function (msg) {
